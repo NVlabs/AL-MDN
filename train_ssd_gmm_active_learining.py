@@ -128,7 +128,7 @@ def create_loaders():
                                              collate_fn=detection_collate,
                                              pin_memory=True)
 
-    unsupervised_data_loader = data.DataLoader(unsupervised_dataset, batch_size=1,
+    unsupervised_data_loader = data.DataLoader(unsupervised_dataset, batch_size=4,
                                                num_workers=args.num_workers,
                                                sampler=SubsetSequentialSampler(unlabeled_set),
                                                collate_fn=detection_collate,
@@ -148,7 +148,7 @@ def change_loaders(
                                              collate_fn=detection_collate,
                                              pin_memory=True)
 
-    unsupervised_data_loader = data.DataLoader(unsupervised_dataset, batch_size=1,
+    unsupervised_data_loader = data.DataLoader(unsupervised_dataset, batch_size=4,
                                                num_workers=args.num_workers,
                                                sampler=SubsetSequentialSampler(unlabeled_set),
                                                collate_fn=detection_collate,

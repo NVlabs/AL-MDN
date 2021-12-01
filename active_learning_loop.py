@@ -48,7 +48,7 @@ def active_learning_cycle(
 
     # filtering threshold of confidence score
     thresh = 0.5
-    checker = 0
+    checker = True
     for j in range(len(batch_iterator)):
         print(j)
         images, _ = next(batch_iterator)
@@ -203,24 +203,29 @@ def active_learning_cycle(
                 )
 
         # store the maximum value of each uncertainty in each jagged list
-        for p in range(output.size(1)):
-            q = 0
-            if j == checker:
-                list_loc_al.append([])
-                list_loc_ep.append([])
-                list_conf_al.append([])
-                list_conf_ep.append([])
-                checker = j + 1
-            while output[0, p, q, 0] >= thresh:
-                UC_max_al_temp = torch.max(output[0, p, q, 5:9]).item()
-                UC_max_ep_temp = torch.max(output[0, p, q, 9:13]).item()
-                UC_max_conf_al_temp = torch.max(output[0, p, q, 13:14]).item()
-                UC_max_conf_ep_temp = torch.max(output[0, p, q, 14:15]).item()
-                list_loc_al[j].append(UC_max_al_temp)
-                list_loc_ep[j].append(UC_max_ep_temp)
-                list_conf_al[j].append(UC_max_conf_al_temp)
-                list_conf_ep[j].append(UC_max_conf_ep_temp)
-                q += 1
+        for b in range(output.size(0)):
+            for p in range(output.size(1)):
+                q = 0
+                if checker and p == 0:
+                    list_loc_al.append([])
+                    list_loc_ep.append([])
+                    list_conf_al.append([])
+                    list_conf_ep.append([])
+                    checker = False
+
+                while output[b, p, q, 0] >= thresh:
+
+                    UC_max_al_temp = torch.max(output[b, p, q, 5:9]).item()
+                    UC_max_ep_temp = torch.max(output[b, p, q, 9:13]).item()
+                    UC_max_conf_al_temp = torch.max(output[b, p, q, 13:14]).item()
+                    UC_max_conf_ep_temp = torch.max(output[b, p, q, 14:15]).item()
+                    list_loc_al[len(list_loc_al)-1].append(UC_max_al_temp)
+                    list_loc_ep[len(list_loc_ep)-1].append(UC_max_ep_temp)
+                    list_conf_al[len(list_conf_al)-1].append(UC_max_conf_al_temp)
+                    list_conf_ep[len(list_conf_ep)-1].append(UC_max_conf_ep_temp)
+                    q += 1
+
+                    checker=True
 
     # z-score normalization and the deciding labeled and unlabeled dataset
     labeled_set, unlabeled_set = normalization_and_select_dataset(
@@ -321,7 +326,6 @@ def normalization_and_select_dataset(
     uc_list = np.array(uc_list)
     criterion_UC = np.max(uc_list, axis=1)
     sorted_indices = np.argsort(criterion_UC)[::-1]
-
     labeled_set += list(np.array(unlabeled_set)[sorted_indices[:acquisition_budget]])
     unlabeled_set = list(np.array(unlabeled_set)[sorted_indices[acquisition_budget:]])
 
