@@ -1,0 +1,7 @@
+visdom
+opencv-python
+pycocotools
+scikit-image
+scikit-learn
+tensorboard
+tqdm

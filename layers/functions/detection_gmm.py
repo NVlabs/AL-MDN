@@ -29,7 +29,7 @@ class Detect_GMM(Function):
         self.conf_thresh = conf_thresh
         self.variance = [0.1, 0.2]
 
-
+    @staticmethod
     def forward(self, prior_data, \
     loc_mu_1=None, loc_var_1=None, loc_pi_1=None, loc_mu_2=None, loc_var_2=None, loc_pi_2=None, \
     loc_mu_3=None, loc_var_3=None, loc_pi_3=None, loc_mu_4=None, loc_var_4=None, loc_pi_4=None, \

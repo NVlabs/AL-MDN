@@ -268,7 +268,7 @@ class SSD_GMM(nn.Module):
             conf_pi_3 = conf_pi_3.view(-1, 1)
             conf_pi_4 = conf_pi_4.view(-1, 1)
 
-            output = self.detect(
+            output = self.detect.apply(
                 self.priors.type(type(x.data)),
                 loc_mu_1.view(loc_mu_1.size(0), -1, 4),
                 loc_var_1.view(loc_var_1.size(0), -1, 4),
